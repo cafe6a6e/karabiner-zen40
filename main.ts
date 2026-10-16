@@ -32,9 +32,9 @@ const mouseScrollSpeed = 36;
 // - Left ⌘ is a numpad layer (see "Num keys"); use right ⌘ for shortcuts.
 //   Tapping right ⌘ alone sends ⌃␣ (input source switch).
 // - Physical [ and ' are ⌫ and ⏎. Symbols on the right edge of QWERTY are
-//   moved to the Caps layer: Caps+u/i → [ ], Caps+m → ', Caps+; → -, Caps+/ → \.
-// - Dvorak (toggle: left ⌥+Esc) puts / on the q key, since the Caps layer has no
-//   slot for it. Caps-layer symbols stay on the same physical keys.
+//   moved to the Caps layer: Caps+u/i → [ ], Caps+m → ', Caps+; → /, Caps+/ → \.
+// - - is on the physical / key in QWERTY and on the q key in Dvorak.
+//   Caps-layer symbols stay on the same physical keys.
 writeToProfile(profileName, [
   layer("tab", tabLayerVarName)
     .description(
@@ -54,7 +54,7 @@ writeToProfile(profileName, [
     ]),
   layer("⇪", capsLockLayerVarName)
     .description(
-      "Caps Lock: tap for Esc, hold for arrows (h j k l) and ` [ ] ( ) - = ' < > \\",
+      "Caps Lock: tap for Esc, hold for arrows (h j k l) and ` [ ] ( ) / = ' < > \\",
     )
     // .configKey((v) => v.toIfAlone("[", ["control"]), true) // ESC alternative in VIM
     .configKey((v) => v.toIfAlone("escape"), true)
@@ -72,7 +72,7 @@ writeToProfile(profileName, [
       map("j").to("↓"),
       map("k").to("↑"),
       map("l").to("→"),
-      map(";").to("-"),
+      map(";").to("/"),
       map("'").to("⏎"),
       map("n").to("="),
       map("m").to("'"),
@@ -147,7 +147,7 @@ writeToProfile(profileName, [
   // output event and is not matched again.
   // The toggle and the layer are one rule so they are always enabled together.
   // Keep it below the Delete/Return and numpad rules, which take precedence.
-  rule("Left ⌥ + Esc toggles a Dvorak layer (/ on the q key)").manipulators([
+  rule("Left ⌥ + Esc toggles a Dvorak layer (- on the q key)").manipulators([
     map("escape", "l⌥")
       .condition(ifVar(dvorakLayerVarName, 0))
       .toVar(dvorakLayerVarName, 1)
@@ -175,7 +175,7 @@ writeToProfile(profileName, [
       map("-", null, "⌘⌃⇧").to("["),
       map("=", null, "⌘⌃⇧").to("]"),
       // top row
-      map("q", null, "⌘⌃⇧").to("/"),
+      map("q", null, "⌘⌃⇧").to("-"),
       map("w", null, "⌘⌃⇧").to(","),
       map("e", null, "⌘⌃⇧").to("."),
       map("r", null, "⌘⌃⇧").to("p"),
@@ -208,4 +208,6 @@ writeToProfile(profileName, [
       map("/", null, "⌘⌃⇧").to("z"),
     ]),
   ]),
+  // Keep it below the Dvorak rule, which remaps / to z while that layer is on.
+  rule("/ → - (QWERTY)").manipulators([map("/", null, "⌘⌃⇧").to("-")]),
 ]);
