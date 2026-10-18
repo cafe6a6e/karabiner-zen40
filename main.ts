@@ -38,7 +38,7 @@ const mouseScrollSpeed = 36;
 writeToProfile(profileName, [
   layer("tab", tabLayerVarName)
     .description(
-      "Hold Tab: shifted numbers (! @ # …) on the left ⌘ numpad positions",
+      "Hold Tab: shifted numbers (! @ # …) on the left ⌘ numpad positions, ? on h, _ on ;",
     )
     .manipulators([
       map("m").to("1", "shift"),
@@ -51,6 +51,8 @@ writeToProfile(profileName, [
       map("i").to("8", "shift"),
       map("o").to("9", "shift"),
       map("p").to("0", "shift"),
+      map("h").to("/", "shift"),
+      map(";").to("-", "shift"),
     ]),
   layer("⇪", capsLockLayerVarName)
     .description(
@@ -134,10 +136,12 @@ writeToProfile(profileName, [
     map("s", "l⌥").toPointingButton("button3"),
   ]),
   rule(
-    "[ → Delete, ' → Return, tap right ⌘ → ⌃Space (input source)",
+    "[ → Delete, ' → Return, / → - (QWERTY), tap right ⌘ → ⌃Space (input source)",
   ).manipulators([
     map("[", null, "any").to("⌫"),
     map("'", null, "any").to("⏎"),
+    // Only in QWERTY: the Dvorak layer below remaps / to z.
+    map("/", null, "⌘⌃⇧").condition(ifVar(dvorakLayerVarName, 0)).to("-"),
     map("r⌘").toIfAlone("␣", "r⌃").to("r⌘"),
   ]),
   // Toggle the Dvorak layer with left Option+Esc and briefly show the active layer
@@ -208,6 +212,4 @@ writeToProfile(profileName, [
       map("/", null, "⌘⌃⇧").to("z"),
     ]),
   ]),
-  // Keep it below the Dvorak rule, which remaps / to z while that layer is on.
-  rule("/ → - (QWERTY)").manipulators([map("/", null, "⌘⌃⇧").to("-")]),
 ]);
