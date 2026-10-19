@@ -32,13 +32,13 @@ const mouseScrollSpeed = 36;
 // - Left ⌘ is a numpad layer (see "Num keys"); use right ⌘ for shortcuts.
 //   Tapping right ⌘ alone sends ⌃␣ (input source switch).
 // - Physical [ and ' are ⌫ and ⏎. Symbols on the right edge of QWERTY are
-//   moved to the Caps layer: Caps+u/i → [ ], Caps+m → ', Caps+; → -, Caps+/ → \.
-// - Dvorak (toggle: left ⌥+Esc) puts / on the q key, since the Caps layer has no
-//   slot for it. Caps-layer symbols stay on the same physical keys.
+//   moved to the Caps layer: Caps+u/i → [ ], Caps+m → ', Caps+; → /, Caps+/ → \.
+// - - is on the physical / key in QWERTY and on the q key in Dvorak.
+//   Caps-layer symbols stay on the same physical keys.
 writeToProfile(profileName, [
   layer("tab", tabLayerVarName)
     .description(
-      "Hold Tab: shifted numbers (! @ # …) on the left ⌘ numpad positions",
+      "Hold Tab: shifted numbers (! @ # …) on the left ⌘ numpad positions, ? on h, _ on ;",
     )
     .manipulators([
       map("m").to("1", "shift"),
@@ -51,10 +51,12 @@ writeToProfile(profileName, [
       map("i").to("8", "shift"),
       map("o").to("9", "shift"),
       map("p").to("0", "shift"),
+      map("h").to("/", "shift"),
+      map(";").to("-", "shift"),
     ]),
   layer("⇪", capsLockLayerVarName)
     .description(
-      "Caps Lock: tap for Esc, hold for arrows (h j k l) and ` [ ] ( ) - = ' < > \\",
+      "Caps Lock: tap for Esc, hold for arrows (h j k l) and ` [ ] ( ) / = ' < > \\",
     )
     // .configKey((v) => v.toIfAlone("[", ["control"]), true) // ESC alternative in VIM
     .configKey((v) => v.toIfAlone("escape"), true)
@@ -72,7 +74,7 @@ writeToProfile(profileName, [
       map("j").to("↓"),
       map("k").to("↑"),
       map("l").to("→"),
-      map(";").to("-"),
+      map(";").to("/"),
       map("'").to("⏎"),
       map("n").to("="),
       map("m").to("'"),
@@ -134,10 +136,12 @@ writeToProfile(profileName, [
     map("s", "l⌥").toPointingButton("button3"),
   ]),
   rule(
-    "[ → Delete, ' → Return, tap right ⌘ → ⌃Space (input source)",
+    "[ → Delete, ' → Return, / → - (QWERTY), tap right ⌘ → ⌃Space (input source)",
   ).manipulators([
     map("[", null, "any").to("⌫"),
     map("'", null, "any").to("⏎"),
+    // Only in QWERTY: the Dvorak layer below remaps / to z.
+    map("/", null, "⌘⌃⇧").condition(ifVar(dvorakLayerVarName, 0)).to("-"),
     map("r⌘").toIfAlone("␣", "r⌃").to("r⌘"),
   ]),
   // Toggle the Dvorak layer with left Option+Esc and briefly show the active layer
@@ -147,7 +151,7 @@ writeToProfile(profileName, [
   // output event and is not matched again.
   // The toggle and the layer are one rule so they are always enabled together.
   // Keep it below the Delete/Return and numpad rules, which take precedence.
-  rule("Left ⌥ + Esc toggles a Dvorak layer (/ on the q key)").manipulators([
+  rule("Left ⌥ + Esc toggles a Dvorak layer (- on the q key)").manipulators([
     map("escape", "l⌥")
       .condition(ifVar(dvorakLayerVarName, 0))
       .toVar(dvorakLayerVarName, 1)
@@ -175,7 +179,7 @@ writeToProfile(profileName, [
       map("-", null, "⌘⌃⇧").to("["),
       map("=", null, "⌘⌃⇧").to("]"),
       // top row
-      map("q", null, "⌘⌃⇧").to("/"),
+      map("q", null, "⌘⌃⇧").to("-"),
       map("w", null, "⌘⌃⇧").to(","),
       map("e", null, "⌘⌃⇧").to("."),
       map("r", null, "⌘⌃⇧").to("p"),
